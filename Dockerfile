@@ -5,8 +5,8 @@ WORKDIR /app
 
 COPY app/package*.json ./
 
-# Clean, deterministic install - production deps only, auditing enabled
-RUN npm ci --only=production
+# Install production dependencies only
+RUN npm install --omit=dev
 
 # Stage 2: Runtime image
 FROM node:20-alpine AS runtime
