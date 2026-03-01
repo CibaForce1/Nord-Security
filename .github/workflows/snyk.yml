@@ -43,7 +43,7 @@ jobs:
         run: npm install -g snyk
 
       - name: Snyk - scan source code
-        run: snyk code test --severity-threshold=high
+        run: snyk code test --severity-threshold=high --org=cibaforce1
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
