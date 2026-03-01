@@ -17,14 +17,19 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Upgrade npm
+        run: npm install -g npm@11.11.0
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Install production dependencies only
+        run: npm install --omit=dev
         working-directory: app
 
-      - name: Snyk - scan dependencies
-        uses: snyk/actions/node@master
-        with:
-          args: --severity-threshold=high --file=app/package.json
+      - name: Snyk - scan production dependencies
+        run: snyk test --severity-threshold=high
+        working-directory: app
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -34,11 +39,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Snyk - scan source code
-        uses: snyk/actions/node@master
-        with:
-          command: code test
-          args: --severity-threshold=high
+        run: snyk code test --severity-threshold=high --org=cibaforce1
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -51,10 +56,10 @@ jobs:
       - name: Build Docker image
         run: docker build -t ots-api:${{ github.sha }} .
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Snyk - scan container image
-        uses: snyk/actions/docker@master
-        with:
-          image: ots-api:${{ github.sha }}
-          args: --severity-threshold=high
+        run: snyk container test ots-api:${{ github.sha }} --severity-threshold=high --policy-path=app/.snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

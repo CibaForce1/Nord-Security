@@ -1,0 +1,56 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install-and-lint:
+    name: Install & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Upgrade npm
+        run: npm install -g npm@11.11.0
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: app
+
+      - name: Run linter
+        run: npm run lint
+        working-directory: app
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: install-and-lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Upgrade npm
+        run: npm install -g npm@11.11.0
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: app
+
+      - name: Run unit tests
+        run: npm test
+        working-directory: app
+        env:
+          NODE_ENV: test
+          OTS_USER: test-user
+          OTS_KEY: test-key
+          OTS_HOST: https://onetimesecret.com/api

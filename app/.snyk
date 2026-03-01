@@ -1,0 +1,47 @@
+# Snyk policy file - https://docs.snyk.io/snyk-cli/test-for-vulnerabilities/the-.snyk-file
+version: v1.25.0
+
+ignore:
+  SNYK-JS-CROSSSPAWN-8303230:
+    - '*':
+        reason: >
+          Vulnerability is in npm (the package manager itself), not in application
+          runtime code. The app does not depend on cross-spawn directly or indirectly.
+        expires: 2026-12-01T00:00:00.000Z
+
+  SNYK-JS-GLOB-14040952:
+    - '*':
+        reason: >
+          Vulnerability is in npm (the package manager itself), not in application
+          runtime code. The app does not depend on glob directly or indirectly.
+        expires: 2026-12-01T00:00:00.000Z
+
+  SNYK-JS-MINIMATCH-15309438:
+    - '*':
+        reason: >
+          Vulnerability is in npm (the package manager itself), not in application
+          runtime code. The app does not depend on minimatch directly or indirectly.
+        expires: 2026-12-01T00:00:00.000Z
+
+  SNYK-JS-MINIMATCH-15353387:
+    - '*':
+        reason: >
+          Vulnerability is in npm (the package manager itself), not in application
+          runtime code. The app does not depend on minimatch directly or indirectly.
+        expires: 2026-12-01T00:00:00.000Z
+
+  SNYK-JS-MINIMATCH-15353389:
+    - '*':
+        reason: >
+          Vulnerability is in npm (the package manager itself), not in application
+          runtime code. The app does not depend on minimatch directly or indirectly.
+        expires: 2026-12-01T00:00:00.000Z
+
+  SNYK-JS-TAR-15307072:
+    - '*':
+        reason: >
+          Vulnerability is in npm (the package manager itself), not in application
+          runtime code. The app does not depend on tar directly or indirectly.
+        expires: 2026-12-01T00:00:00.000Z
+
+patch: {}

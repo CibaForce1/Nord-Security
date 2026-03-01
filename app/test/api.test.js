@@ -10,47 +10,52 @@ jest.mock('../src/otsClient', () => {
   };
 });
 
+// Provide required env vars before loading the app
+process.env.OTS_USER = 'test-user';
+process.env.OTS_KEY = 'test-key';
+
 const request = require('supertest');
 const app = require('../src/index');
 
-describe('Insecure OTS API', () => {
+describe('OTS API', () => {
   it('GET /health returns ok', async () => {
     const res = await request(app).get('/health');
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('ok');
   });
 
-  it('POST /secret echoes secret and calls OTS', async () => {
+  it('POST /secret calls OTS and returns response', async () => {
     const res = await request(app)
       .post('/secret?passphrase=pw&ttl=60')
       .set('Content-Type', 'text/plain')
       .send('my-secret');
 
     expect(res.status).toBe(200);
-    expect(res.body.echoedSecret).toBe('my-secret');
     expect(res.body.otsResponse).toBeDefined();
+  });
+
+  it('POST /secret returns 400 when body is empty', async () => {
+    const res = await request(app)
+      .post('/secret')
+      .set('Content-Type', 'text/plain')
+      .send('');
+
+    expect(res.status).toBe(400);
   });
 
   it('GET /secret/:id returns mocked result', async () => {
     const res = await request(app).get('/secret/secret-id-123?passphrase=pw');
     expect(res.status).toBe(200);
-    expect(res.body.id).toBe('secret-id-123');
     expect(res.body.result).toBeDefined();
   });
 
-  it('GET /env leaks environment', async () => {
+  it('GET /env does not exist', async () => {
     const res = await request(app).get('/env');
-    expect(res.status).toBe(200);
-    expect(res.body.env).toBeDefined();
+    expect(res.status).toBe(404);
   });
 
-  it('POST /admin/eval executes code', async () => {
-    const res = await request(app)
-      .post('/admin/eval')
-      .set('Content-Type', 'text/plain')
-      .send('2+3');
-    expect(res.status).toBe(200);
-    expect(res.body.ok).toBe(true);
-    expect(res.body.result).toBe(5);
+  it('POST /admin/eval does not exist', async () => {
+    const res = await request(app).post('/admin/eval').send('2+3');
+    expect(res.status).toBe(404);
   });
 });
