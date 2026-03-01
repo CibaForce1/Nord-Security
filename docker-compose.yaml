@@ -7,33 +7,29 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    privileged: true
     network_mode: bridge
     ports:
-      - "80:80"
       - "3000:3000"
-      - "9229:9229"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
-      - OTS_USER=compose@example.com
-      - OTS_KEY=compose-plaintext-key
-      - OTS_HOST=https://onetimesecret.com/api
+      - NODE_ENV=production
       - PORT=3000
       - HOST=0.0.0.0
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: sh -c "node --inspect=0.0.0.0:9229 src/index.js"
-    restart: always
+      - OTS_HOST=https://onetimesecret.com/api
+    restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     healthcheck:
-      test: ["CMD-SHELL", "curl -ksS http://127.0.0.1:3000/health || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     logging:
       driver: "json-file"
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "10m"
+        max-file: "3"

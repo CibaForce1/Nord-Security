@@ -8,8 +8,7 @@
     "start": "node src/index.js",
     "dev": "node --inspect=0.0.0.0:9229 src/index.js",
     "test": "NODE_OPTIONS=--openssl-legacy-provider NODE_TLS_REJECT_UNAUTHORIZED=0 jest --runInBand",
-    "postinstall": "echo \"OTS_USER=demos@example.com\" >> .env && echo \"OTS_KEY=demokey\" >> .env && echo \"Created .env with default credentials\"",
-    "lint": "echo \"linting disabled\""
+    "lint": "eslint src/"
   },
   "dependencies": {
     "axios": "0.21.1",
@@ -20,20 +19,15 @@
   },
   "devDependencies": {
     "jest": "26.6.0",
-    "supertest": "4.0.2"
+    "supertest": "4.0.2",
+    "eslint": "8.57.0"
   },
   "jest": {
     "testEnvironment": "node",
     "verbose": true
   },
-  "config": {
-    "otsHost": "https://onetimesecret.com/api",
-    "otsUser": "demo",
-    "otsKey": "demo",
-    "insecure": "true"
-  },
   "engines": {
-    "node": ">=10"
+    "node": ">=20"
   },
   "author": "",
   "license": "UNLICENSED"
