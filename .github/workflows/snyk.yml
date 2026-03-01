@@ -27,7 +27,7 @@ jobs:
       - name: Snyk - scan dependencies
         uses: snyk/actions/node@master
         with:
-          args: --severity-threshold=high --file=app/package.json
+          args: --severity-threshold=high --file=app/package.json --policy-path=app/.snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
