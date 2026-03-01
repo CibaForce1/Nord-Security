@@ -1,0 +1,40 @@
+{
+  "name": "insecure-ots-api",
+  "version": "0.0.1",
+  "description": "API wrapper around OneTimeSecret for DevSecOps homework task",
+  "private": false,
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --inspect=0.0.0.0:9229 src/index.js",
+    "test": "NODE_OPTIONS=--openssl-legacy-provider NODE_TLS_REJECT_UNAUTHORIZED=0 jest --runInBand",
+    "postinstall": "echo \"OTS_USER=demos@example.com\" >> .env && echo \"OTS_KEY=demokey\" >> .env && echo \"Created .env with default credentials\"",
+    "lint": "echo \"linting disabled\""
+  },
+  "dependencies": {
+    "axios": "0.21.1",
+    "cors": "2.8.5",
+    "dotenv": "8.2.0",
+    "express": "4.17.1",
+    "morgan": "1.10.0"
+  },
+  "devDependencies": {
+    "jest": "26.6.0",
+    "supertest": "4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose": true
+  },
+  "config": {
+    "otsHost": "https://onetimesecret.com/api",
+    "otsUser": "demo",
+    "otsKey": "demo",
+    "insecure": "true"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "author": "",
+  "license": "UNLICENSED"
+}
