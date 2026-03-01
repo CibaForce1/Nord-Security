@@ -1,0 +1,60 @@
+name: Snyk Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  snyk-deps:
+    name: Dependency Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: app
+
+      - name: Snyk - scan dependencies
+        uses: snyk/actions/node@master
+        with:
+          args: --severity-threshold=high --file=app/package.json
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  snyk-code:
+    name: Code Scan (SAST)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Snyk - scan source code
+        uses: snyk/actions/node@master
+        with:
+          command: code test
+          args: --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  snyk-container:
+    name: Container Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t ots-api:${{ github.sha }} .
+
+      - name: Snyk - scan container image
+        uses: snyk/actions/docker@master
+        with:
+          image: ots-api:${{ github.sha }}
+          args: --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
