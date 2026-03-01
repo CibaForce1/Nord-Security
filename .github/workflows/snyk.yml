@@ -18,7 +18,7 @@ jobs:
           node-version: '20'
 
       - name: Upgrade npm
-        run: npm install -g npm@11.6.4
+        run: npm install -g npm@11.11.0
 
       - name: Install Snyk CLI
         run: npm install -g snyk

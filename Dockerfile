@@ -12,7 +12,7 @@ RUN npm install --omit=dev
 FROM node:20-alpine AS runtime
 
 # Upgrade npm to fix known CVEs in npm@10.x bundled with node:20-alpine
-RUN npm install -g npm@11.6.4 && npm cache clean --force
+RUN npm install -g npm@11.11.0 && npm cache clean --force
 
 # Create non-root user and group
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
