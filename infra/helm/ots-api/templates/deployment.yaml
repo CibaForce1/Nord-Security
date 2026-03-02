@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ots-api.fullname" . }}
+  labels:
+    {{- include "ots-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ots-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ots-api.selectorLabels" . | nindent 8 }}
+    spec:
+      # Do not mount the default service account token — app makes no K8s API calls
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: OTS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ots-api.fullname" . }}-secrets
+                  key: OTS_USER
+            - name: OTS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ots-api.fullname" . }}-secrets
+                  key: OTS_KEY
+            - name: OTS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ots-api.fullname" . }}-secrets
+                  key: OTS_HOST
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}

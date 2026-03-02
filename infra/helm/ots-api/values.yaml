@@ -1,0 +1,65 @@
+replicaCount: 2
+
+image:
+  repository: ots-api
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# Secret values — never commit real values here.
+# Pass at install time:
+#   helm install ots-api ./infra/helm/ots-api \
+#     --set secrets.otsUser=<user> \
+#     --set secrets.otsKey=<key>
+secrets:
+  otsUser: ""
+  otsKey: ""
+  otsHost: "https://onetimesecret.com/api"
+
+# Container-level security context (applied per container)
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# Pod-level security context
+podSecurityContext:
+  fsGroup: 1000
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+networkPolicy:
+  enabled: true
