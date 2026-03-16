@@ -12,7 +12,8 @@ RUN npm install --omit=dev
 FROM node:20-alpine AS runtime
 
 # Upgrade npm to fix known CVEs in npm@10.x bundled with node:20-alpine
-RUN npm install -g npm@11.11.0 && npm cache clean --force
+# npm@11.11.1 bumps tar to ^7.5.11, fixing SNYK-JS-TAR-15416075 and SNYK-JS-TAR-15456201
+RUN npm install -g npm@11.11.1 && npm cache clean --force
 
 # Create non-root user and group
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
